@@ -1,0 +1,58 @@
+---
+title: "Homework 3"
+output: html_notebook
+---
+
+```{r echo=FALSE message=FALSE}
+library(tidyverse)
+```
+
+```{r echo=FALSE message=FALSE}
+#make a tibble with fish, count and freqency
+fish<-read.table("fish.txt", header = TRUE)
+fisha<-fish
+colnames(fisha)<-"species"
+x<-sample(LETTERS[1:5], 300, replace = T)
+x<-data.frame(x)
+colnames(x)="location"
+tibble(x$location)
+locations<-x$location
+fisha<-mutate(fisha, "location"=locations)
+fisha<-mutate(fisha, "count"=rep(1, n=300))
+fisha<-fisha%>% group_by(species, location) %>% tally() # need to tally to get a count #
+fisha<-spread(fisha, key= `location`, value= `n`)
+table1<-fisha
+table1_matrix<-as.matrix(table1[2:6]) # tibbles r shitty for R; move to matrix
+rownames(table1_matrix)=c("cod","salmon","shark","steelhead","tuna") # change the names of columns
+```
+
+```{r}
+mostfreqfish(table1_matrix)
+```
+
+```{r}
+# make a matrix with fish and price
+table2<-matrix(c(7.50,8,12,15,4), ncol=1)
+rownames(table2)=c("cod","salmon","shark","steelhead","tuna")
+colnames(table2)= "price"
+```
+
+Revenue By Location
+```{r}
+revenuebylocation(table1_matrix,table2)
+```
+
+Total Revenue
+
+```{r}
+TotalRevenueQ3(table1_matrix,table2)
+```
+
+Add a Graph
+
+```{r}
+
+plot(g, xlab="locations",col="blue", ylab="Revenue ($)", x-tick )
+```
+
+

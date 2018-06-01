@@ -29,6 +29,12 @@ newgaz<-select(gaz_raw, FEATURE_ID: STATE_ALPHA, COUNTY_NAME, ends_with("DEC"), 
 
 colnames(newgaz)<- c("feature ID", "feature name", "feature class", "state alpha", "county name", "primary latitude(decimal)", "primary longitude(decimal)", "source latitutde(decimal)", "source longitude(decimal)", "elevation in meters", "map name", "date created", "date endited")
 
+##### could have done
+
+#gaz<-
+ # select(gaz_raw,
+  #       id   =  feature ID,
+   #      .....
 ```
 
 
@@ -53,6 +59,13 @@ gaz_tibble<-read_csv("gaz_tibble.csv",
                         "date endited"=col_date()
                       )
 )
+
+######### could have done
+#  gaz#id   =    parse_integer(id)
+#  ....
+#  ....
+
+
 gaz_tibble %>% 
   drop_na("primary latitude(decimal)","primary longitude(decimal)")
 
@@ -83,7 +96,6 @@ kable(tail(gaz_tibble %>% count(`feature class`, sort=TRUE)), caption="Least Occ
 
 
 Q3What is the approximate center point of each county?
-
 
 ```{r include= FALSE}
 #Question 3; select data and get ride of 0s
