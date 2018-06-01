@@ -7,7 +7,7 @@ output: html_notebook
 library(tidyverse)
 ```
 
-```{r echo=FALSE message=FALSE}
+```{r echo=FALSE message=FALSE }
 #make a tibble with fish, count and freqency
 fish<-read.table("fish.txt", header = TRUE)
 fisha<-fish
@@ -15,7 +15,6 @@ colnames(fisha)<-"species"
 x<-sample(LETTERS[1:5], 300, replace = T)
 x<-data.frame(x)
 colnames(x)="location"
-tibble(x$location)
 locations<-x$location
 fisha<-mutate(fisha, "location"=locations)
 fisha<-mutate(fisha, "count"=rep(1, n=300))
@@ -51,7 +50,7 @@ TotalRevenueQ3(table1_matrix,table2)
 Add a Graph
 
 ```{r}
-
+g=Total_Revenue[1:5]
 plot(g, xlab="locations",col="blue", ylab="Revenue ($)", x-tick )
 ```
 

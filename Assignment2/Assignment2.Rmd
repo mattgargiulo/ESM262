@@ -27,12 +27,24 @@ as_tibble(gaz_raw)
 
 
 ```{r warning= FALSE, include= FALSE, message= FALSE}
-#solect the columns i want and rename to match assignment
+#select the columns i want and rename to match assignment
 #column select and rename 
-colnames(gaz_raw)
-newgaz<-select(gaz_raw, FEATURE_ID: STATE_ALPHA, COUNTY_NAME, ends_with("DEC"), ends_with("M"), starts_with("map"), starts_with("DATE"))
 
-colnames(newgaz)<- c("feature ID", "feature name", "feature class", "state alpha", "county name", "primary latitude(decimal)", "primary longitude(decimal)", "source latitutde(decimal)", "source longitude(decimal)", "elevation in meters", "map name", "date created", "date endited")
+newgaz<-select(gaz_raw,
+        'feature ID'                 = FEATURE_ID,
+       ' feature name'               = FEATURE_NAME,
+        'feature class'              = FEATURE_CLASS,
+        'state alpha'                = STATE_ALPHA,
+        'county name'                = COUNTY_NAME,
+        'primary latitude(decimal)' = PRIM_LAT_DEC,
+        'primary longitude(decimal)' = PRIM_LONG_DEC,
+        'source latitude(decimal)'   = SOURCE_LAT_DEC,
+        'source longitude(decimal)'  = SOURCE_LONG_DEC,
+        'elevation in meters'        = ELEV_IN_M,
+        'map name'                   = MAP_NAME,
+        'date created'               = DATE_CREATED,
+        'date edited'                = DATE_EDITED
+)
 
 ```
 
@@ -44,22 +56,22 @@ gaz_tibble<-as.tibble(newgaz)
 write_csv(gaz_tibble, "gaz_tibble.csv")
 gaz_tibble<-read_csv("gaz_tibble.csv",
                       col_types = cols( 
-                        "feature ID"= col_double(),
-                        "feature name"= col_character(),
-                        "feature class"=col_character(),
-                        "country name"=col_character(),
-                        "primary latitude(decimal)"=col_double(),
-                        "primary longitude(decimal)"=col_double(),
-                        "source latitutde(decimal)"=col_double(),
-                        "source longitude(decimal)"=col_double(),
-                        "elevation in meters"=col_double(),
-                        "map name"= col_character(),
-                        "date created"=col_date(),
-                        "date endited"=col_date()
+                        'feature ID'                 =col_double(),
+                        'feature name'               =col_character(),
+                        'feature class'              =col_character(),
+                        'country name'               =col_character(),
+                        'primary latitude(decimal)'  =col_double(),
+                        'primary longitude(decimal)' =col_double(),
+                        'source latitutde(decimal)'  =col_double(),
+                        'source longitude(decimal)'  =col_double(),
+                        'elevation in meters'        =col_double(),
+                        'map name'                   =col_character(),
+                        'date created'               =col_date(),
+                        'date endited'               =col_date()
                       )
 )
 gaz_tibble %>% 
-  drop_na("primary latitude(decimal)","primary longitude(decimal)")
+  drop_na('primary latitude(decimal)','primary longitude(decimal)')
 
 gaz_tibble<-gaz_tibble %>% filter(`state alpha`== "CA")
 
@@ -78,11 +90,24 @@ copy_to(conn, gaz_tibble, "gaz",
 
 What is the most-frequently-occuring feature name?
 ```{r}
-dbGetQuery(conn, "SELECT (`feature name`), COUNT(`feature name`) AS count FROM gaz GROUP BY(`feature name`) ORDER BY count DESC LIMIT 10;")
+dbGetQuery(conn, "SELECT     (`feature name`), 
+                  COUNT       (`feature name`) AS COUNT 
+                  FROM       gaz 
+                  GROUP BY   (`feature name`) 
+                  ORDER BY   count 
+                  DESC LIMIT 1
+;") 
+
 ```
 What is the least-frequently-occuring feature class?
 ```{r}
-dbGetQuery(conn, "SELECT (`feature class`), COUNT(`feature class`) AS count FROM gaz GROUP BY(`feature class`) ORDER BY count ASC LIMIT 10;")
+dbGetQuery(conn, "SELECT          (`feature class`),
+                                  COUNT(`feature class`) AS count 
+                  FROM gaz 
+                  GROUP BY        (`feature class`) 
+                  ORDER BY        count 
+                  ASC             LIMIT 2
+;")
 ```
 ---------------
 What is the approximate center point of each county?
@@ -99,8 +124,8 @@ summarizegaz<-summarise(coordgaz,
     minlong=min(`primary longitude(decimal)`, na.rm=TRUE))
 
 summarizegaz<-summarizegaz %>% 
-mutate(centerlat=maxlat+minlat/2, 
-      centerlong=maxlong+minlong/2
+mutate(centerlat=(maxlat+minlat)/2, 
+      centerlong=(maxlong+minlong)/2
 )
 ```
 
@@ -112,7 +137,12 @@ copy_to(conn, summarizegaz, "Q3",
 
 ```{r}
 
-dbGetQuery(conn, "SELECT `county name`,centerlat As Center_Latitude, centerlong AS Center_Longitude FROM Q3 LIMIT 12;")
+dbGetQuery(conn, "SELECT `county name`,
+                          centerlat As Center_Latitude, 
+                          centerlong AS Center_Longitude 
+                 FROM Q3 
+                 LIMIT 12
+;")
 
 ```
 
@@ -122,20 +152,29 @@ What are the fractions of the total number of features in each county that are n
 ```{r}
 
 Q4<-dbGetQuery(conn, "SELECT `county name`,
-               CASE
-                WHEN `feature class` IN('Airport','Bridge','Building','Canal','Cemetery','Census','Church','Civil','Crossing','Dam','Harbor','Hospital','Locale','Military','Mine','Oilfield','Park','Pillar','Populated Place','Post Office','Reserve','Reservoir','School','Tower','Trail','Tunnel','Well')
-                THEN 'man_made'
-                ELSE 'natural'
-                END AS 'feature class type'
-              FROM gaz
-           ;")
+                      CASE
+                        WHEN `feature class`          
+
+                      IN('Airport','Bridge','Building','Canal','Cemetery','Census','Church','Civil','Crossing','Dam','Harbor','Hospital','Locale','Military','Mine','Oilfield','Park','Pillar','Populated Place','Post Office','Reserve','Reservoir','School','Tower','Trail','Tunnel','Well')
+                    
+                    THEN 'man_made'
+                    ELSE 'natural'
+                    END AS 'feature class type'
+                    FROM gaz
+;")
 
 Q4<-Q4 %>% group_by(`county name`, `feature class type`) %>% tally() 
 Q4<-spread(Q4, key= `feature class type`, value= `n`)
 Q4<- Q4 %>% mutate(total= man_made + natural,
 fraction_man_made= man_made/total,
 fraction_natural= natural/ total)
-kable(head(Q4), caption= "Fraction of Man Made and Natural Features (top 6)", col.names= c("County Name", "Number of Man Made Features", "Number of Natural Features"," Total Features", "Fraction of Man Made Features","Fraction of Natural Features"))
+Q4 <- select(Q4,
+             `county name`,
+             ` fraction_man_made`,
+             `fraction_natural`
+             )
+
+kable(Q4,col.names= c("County Name"," Man Made Features"," Natural Features"),caption= "Fraction of Man Made and Natural Features", align = 'c' )
 
 
 ```
