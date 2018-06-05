@@ -1,11 +1,13 @@
 Package: Assignment3
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Creating a package
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Matt Gargiulo
+Description: This package returns information on:
+    most caught species per location, 
+    total revenue per location 
+    and total revenue. 
+Data: Data (Fish.txt) was originally supplied by Naomi Tague 
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true

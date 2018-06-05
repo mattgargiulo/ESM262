@@ -1,6 +1,10 @@
 ---
 title: "Homework 3"
-output: html_notebook
+author: "Matt Gargiulo"
+output:
+  html_notebook: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r echo=FALSE, message=FALSE}
@@ -39,7 +43,7 @@ table2
 ```
 
 ```{r}
-answer=freqandrev(table1_matrix,table2)
+freqandrev(table1_matrix,table2)
 ```
 
 
@@ -51,5 +55,6 @@ growthrate(14.3,-0.497,0.1656,0.08588,-0.004266)
 
 ```{r}
 test_file('~/Desktop/ESM262/Assignment3/package/test/growthrate_works.R')
+test_file('~/Desktop/ESM262/Assignment3/package/test/freqandrev_works.R')
 ```
 

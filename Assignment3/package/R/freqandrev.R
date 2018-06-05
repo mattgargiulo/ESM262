@@ -35,14 +35,13 @@ freqandrev<-function(datatable1,datatable2){
     q3<-sum(Total_Revenue)
     # aggregates the revenue
 
-#### need to work on
+
     g=Total_Revenue[1:5]
     title= sprintf(" The total revenue is %d dollars", q3)
-    plot<-barplot(g, xlab="locations",col="blue", ylab="Revenue ($)", main = title, names.arg = c("a","b","c","d","e"))
+    fplot<-barplot(g, xlab="locations",col="blue", ylab="Revenue ($)", main = title, names.arg = c("a","b","c","d","e"))
 
 
-####
-  answer=list(frequency=tmpq1, `Revenue By Location`= q2, `Total Revenue`= q3, plot(plot))
+  answer=list(frequency=tmpq1, `Revenue By Location`= q2, `Total Revenue`= q3, plot)
   return(answer)
 }
 
