@@ -3,16 +3,20 @@ title: "Homework 3"
 output: html_notebook
 ---
 
-```{r echo=FALSE message=FALSE}
+```{r echo=FALSE, message=FALSE}
 library(tidyverse)
+library(devtools)
+library(testthat)
+library(roxygen2)
 ```
 
-```{r echo=FALSE message=FALSE }
+```{r echo=FALSE, message=FALSE }
 #make a tibble with fish, count and freqency
 fish<-read.table("fish.txt", header = TRUE)
+use_data(fish, pkg = 'package', overwrite=T) # sand the data in the data package
 fisha<-fish
 colnames(fisha)<-"species"
-x<-sample(LETTERS[1:5], 300, replace = T)
+x<-sample(LETTERS[1:5], 300, replace = T) # add locations
 x<-data.frame(x)
 colnames(x)="location"
 locations<-x$location
@@ -23,10 +27,7 @@ fisha<-spread(fisha, key= `location`, value= `n`)
 table1<-fisha
 table1_matrix<-as.matrix(table1[2:6]) # tibbles r shitty for R; move to matrix
 rownames(table1_matrix)=c("cod","salmon","shark","steelhead","tuna") # change the names of columns
-```
-
-```{r}
-mostfreqfish(table1_matrix)
+table1_matrix
 ```
 
 ```{r}
@@ -34,24 +35,21 @@ mostfreqfish(table1_matrix)
 table2<-matrix(c(7.50,8,12,15,4), ncol=1)
 rownames(table2)=c("cod","salmon","shark","steelhead","tuna")
 colnames(table2)= "price"
+table2
 ```
-
-Revenue By Location
-```{r}
-revenuebylocation(table1_matrix,table2)
-```
-
-Total Revenue
 
 ```{r}
-TotalRevenueQ3(table1_matrix,table2)
+answer=freqandrev(table1_matrix,table2)
 ```
 
-Add a Graph
 
 ```{r}
-g=Total_Revenue[1:5]
-plot(g, xlab="locations",col="blue", ylab="Revenue ($)", x-tick )
+
+growthrate(14.3,-0.497,0.1656,0.08588,-0.004266)
+
 ```
 
+```{r}
+test_file('~/Desktop/ESM262/Assignment3/package/test/growthrate_works.R')
+```
 
